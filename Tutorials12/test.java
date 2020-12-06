@@ -50,6 +50,24 @@ class Product implements Serializable {
     }
 }
 
+class GeneratingID {
+    final static String lowerCase = "abcdefghijklmnopqrstwxyz";
+    final static String upperCase = "ABCDEFGHIJKLMNOPQRSTWXYZ";
+    final static String symbols = "!@#$%^&*-_";
+    final static String digits = "0123456789";
+
+    public static String generateID() {
+        String productId = "";
+        for (int j = 0; j < 3; j++) {
+            productId += lowerCase.charAt((int) (Math.random() * lowerCase.length()));
+            productId += upperCase.charAt((int) (Math.random() * upperCase.length()));
+            productId += symbols.charAt((int) (Math.random() * symbols.length()));
+            productId += digits.charAt((int) (Math.random() * digits.length()));
+        }
+        return productId;
+    }
+}
+
 class Products {
     static Scanner input = new Scanner(System.in);
     private static ArrayList<Product> ListOfProducts;
@@ -237,24 +255,6 @@ class Products {
         }
     }
 
-}
-
-class GeneratingID {
-    final static String lowerCase = "abcdefghijklmnopqrstwxyz";
-    final static String upperCase = "ABCDEFGHIJKLMNOPQRSTWXYZ";
-    final static String symbols = "!@#$%^&*-_";
-    final static String digits = "0123456789";
-
-    public static String generateID() {
-        String productId = "";
-        for (int j = 0; j < 3; j++) {
-            productId += lowerCase.charAt((int) (Math.random() * lowerCase.length()));
-            productId += upperCase.charAt((int) (Math.random() * upperCase.length()));
-            productId += symbols.charAt((int) (Math.random() * symbols.length()));
-            productId += digits.charAt((int) (Math.random() * digits.length()));
-        }
-        return productId;
-    }
 }
 
 public class test {
