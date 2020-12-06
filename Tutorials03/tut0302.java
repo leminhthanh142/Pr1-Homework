@@ -1,5 +1,5 @@
-package Tutorials02;
-public class tut0202 {
+package Tutorials03;
+public class tut0302 {
     public static void main(String[] args) {
         String pokedex = "This Pokemon  is Pikachu.It is the electric mouse.  " +
                 "It lives in forests  with others." +

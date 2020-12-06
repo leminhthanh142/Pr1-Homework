@@ -1,6 +1,6 @@
-package Tutorials02;
+package Tutorials03;
 
-public class tut0201 {
+public class tut0301 {
     public static void main(String[] args) {
 
         // declare the amount of money
