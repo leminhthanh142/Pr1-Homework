@@ -152,7 +152,7 @@ class ProductsStorage {
     public void save(Products products) throws Exception {
         FileOutputStream fos = new FileOutputStream("src/Assignment2/products.txt");
         ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(products.getList());
+        oos.writeObject(products);
         System.out.println("Successfully wrote to the file.");
         oos.close();
     }
