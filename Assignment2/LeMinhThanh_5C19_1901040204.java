@@ -5,23 +5,26 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 class Product implements Serializable {
-    private String productId;
+    private int productId;
+    private static int nextId = 0;
     private String productName;
     private double productPrice;
     private int productQuantity;
 
-    public Product(String new_productId, String new_productName, double new_productPrice, int new_productQuantity) {
-        this.productId = new_productId;
-        this.productName = new_productName;
-        this.productPrice = new_productPrice;
-        this.productQuantity = new_productQuantity;
+    public Product(String productName, double productPrice, int productQuantity) {
+        this.productId = nextId;
+        Product.nextId++;
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.productQuantity = productQuantity;
     }
 
-    public String getId() {
+    // getter and setter
+    public int getId() {
         return this.productId;
     }
 
-    public void setId(String new_productId) {
+    public void setId(int new_productId) {
         this.productId = new_productId;
     }
 
@@ -50,26 +53,8 @@ class Product implements Serializable {
     }
 }
 
-class GeneratorID {
-    final static String lowerCase = "abcdefghijklmnopqrstwxyz";
-    final static String upperCase = "ABCDEFGHIJKLMNOPQRSTWXYZ";
-    final static String symbols = "!@#$%^&*-_";
-    final static String digits = "0123456789";
-
-    public static String generate() {
-        String productId = "";
-        for (int j = 0; j < 3; j++) {
-            productId += lowerCase.charAt((int) (Math.random() * lowerCase.length()));
-            productId += upperCase.charAt((int) (Math.random() * upperCase.length()));
-            productId += symbols.charAt((int) (Math.random() * symbols.length()));
-            productId += digits.charAt((int) (Math.random() * digits.length()));
-        }
-        return productId;
-    }
-}
-
 class Products {
-    private static ArrayList<Product> ListOfProducts;
+    private final ArrayList<Product> ListOfProducts;
 
     public Products() {
         ListOfProducts = new ArrayList<>();
@@ -85,7 +70,7 @@ class Products {
     }
 
     public void display() {
-        System.out.printf("%-3s | %-13s | %-40s | %-10s | %s | %n", "STT", "Id", "Name", "Price", "Quantity");
+        System.out.printf("%-3s | %-13s | %-40s | %-10s | %s | %n", "No.", "Id", "Name", "Price", "Quantity");
         System.out.println("----------------------------------------------------------------------------------------");
 
         int i = 1;
@@ -96,19 +81,19 @@ class Products {
         }
     }
 
-    public void delete(String ID) {
+    public void delete(int ID) {
         for (Product p : ListOfProducts) {
-            if (p.getId().equals(ID)) {
+            if (p.getId() == ID) {
                 ListOfProducts.remove(p);
                 break;
             }
         }
     }
 
-    public Product edit(String ID, String Name, double Price, int Quantity) {
+    public Product edit(int ID, String Name, double Price, int Quantity) {
         Product editedProduct = null;
         for (Product p : ListOfProducts) {
-            if (p.getId().equals(ID)) {
+            if (p.getId() == ID) {
                 p.setName(Name);
                 p.setPrice(Price);
                 p.setQuantity(Quantity);
@@ -147,19 +132,19 @@ class Products {
 
 }
 
+// for save and load Product
 class ProductsStorage {
 
     public void save(Products products) throws Exception {
-        FileOutputStream fos = new FileOutputStream("src/Assignment2/products.txt");
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(products);
+        final ArrayList<Product> ListOfProducts = products.getList();
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("src/Assignment2/products.txt"));
+        oos.writeObject(ListOfProducts);
         System.out.println("Successfully wrote to the file.");
         oos.close();
     }
 
     public ArrayList<Product> load() throws Exception {
-        FileInputStream fis = new FileInputStream("src/Assignment2/products.txt");
-        ObjectInputStream ois = new ObjectInputStream(fis);
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("src/Assignment2/products.txt"));
         ArrayList<Product> loadProducts = (ArrayList<Product>) ois.readObject();
         ois.close();
         return loadProducts;
@@ -167,6 +152,7 @@ class ProductsStorage {
 }
 
 class Assignment2 {
+    // create new instance
     private final Products products = new Products();
     private final ArrayList<Product> ListOfProducts = products.getList();
     private final ProductsStorage productsStorage = new ProductsStorage();
@@ -209,13 +195,27 @@ class Assignment2 {
                         System.out.print("Enter product name: ");
                         productName = input.nextLine();
 
-                        System.out.print("Enter product price: ");
-                        productPrice = Double.parseDouble(input.nextLine());
+                        do {
+                            try {
+                                System.out.print("Enter product price: ");
+                                productPrice = Double.parseDouble(input.nextLine());
+                            } catch (Exception e) {
+                                System.out.println("You must enter a number. Try again !!");
+                                System.out.print("Price: ");
+                                productPrice = Double.parseDouble(input.nextLine());
+                            }
+                        }
+                        while (productPrice < 0);
 
-                        System.out.print("Enter product quantity: ");
-                        productQuantity = Integer.parseInt(input.nextLine());
+                        try {
+                            System.out.print("Enter product quantity: ");
+                            productQuantity = Integer.parseInt(input.nextLine());
+                        } catch (Exception e) {
+                            System.out.print("Pls, enter an integer: ");
+                            productQuantity = Integer.parseInt(input.nextLine());
+                        }
 
-                        products.add(new Product(GeneratorID.generate(), productName, productPrice, productQuantity));
+                        products.add(new Product(productName, productPrice, productQuantity));
                     }
                 }
 
@@ -223,11 +223,11 @@ class Assignment2 {
 
                 case 3 -> {
                     System.out.print("Enter ID to delete: ");
-                    String deleteID = input.nextLine();
+                    int deleteID = input.nextInt();
 
                     boolean IdValidation = false;
                     for (Product p : ListOfProducts) {
-                        if (p.getId().equals(deleteID)) {
+                        if (p.getId() == deleteID) {
                             IdValidation = true;
                             break;
                         }
@@ -235,30 +235,47 @@ class Assignment2 {
 
                     if (IdValidation) {
                         products.delete(deleteID);
+                        System.out.println("Product was deleted !!");
                     } else System.out.println("Invalid ID. Try again with an existed one!!");
                 }
 
                 case 4 -> {
                     boolean IdValidation = false;
                     System.out.print("Enter product ID: ");
-                    String ID = input.nextLine();
+                    int ID = Integer.parseInt(input.nextLine());
                     for (Product p : ListOfProducts) {
-                        if (p.getId().equals(ID)) {
+                        if (p.getId() == ID) {
                             IdValidation = true;
                             break;
                         }
                     }
                     if (IdValidation) {
                         System.out.print("Enter new name: ");
-                        String new_productName = input.nextLine();
+                        String newName = input.nextLine();
+                        double newPrice;
+                        int newQuantity;
 
-                        System.out.print("Enter new price: ");
-                        double new_productPrice = Double.parseDouble(input.nextLine());
+                        do {
+                            try {
+                                System.out.print("Enter new price: ");
+                                newPrice = Double.parseDouble(input.nextLine());
+                            } catch (Exception e) {
+                                System.out.println("You must enter a number. Try again !!");
+                                System.out.print("New Price: ");
+                                newPrice = Double.parseDouble(input.nextLine());
+                            }
+                        }
+                        while (newPrice < 0);
 
-                        System.out.print("Enter new quantity: ");
-                        int new_productQuantity = Integer.parseInt(input.nextLine());
+                        try {
+                            System.out.print("Enter new quantity: ");
+                            newQuantity = Integer.parseInt(input.nextLine());
+                        } catch (Exception e) {
+                            System.out.print("Pls, enter an integer: ");
+                            newQuantity = Integer.parseInt(input.nextLine());
+                        }
 
-                        products.edit(ID, new_productName, new_productPrice, new_productQuantity);
+                        products.edit(ID, newName, newPrice, newQuantity);
                     } else System.out.println("Invalid ID. Try again with an existed one!!");
                 }
 
@@ -279,7 +296,7 @@ class Assignment2 {
                         int i = 1;
 
                         System.out.println("Search result: ");
-                        System.out.printf("%-3s | %-13s | %-40s | %-10s | %s | %n", "STT", "Id", "Name", "Price", "Quantity");
+                        System.out.printf("%-3s | %-13s | %-40s | %-10s | %s | %n", "No.", "Id", "Name", "Price", "Quantity");
                         System.out.println("----------------------------------------------------------------------------------------");
 
                         for (Product p : searchList) {
@@ -294,7 +311,7 @@ class Assignment2 {
                     ArrayList<Product> sortedList = products.sortByPrice();
 
                     System.out.println("Sorted result: ");
-                    System.out.printf("%-3s | %-13s | %-40s | %-10s | %s | %n", "STT", "Id", "Name", "Price", "Quantity");
+                    System.out.printf("%-3s | %-13s | %-40s | %-10s | %s | %n", "No.", "Id", "Name", "Price", "Quantity");
                     System.out.println("----------------------------------------------------------------------------------------");
 
                     int i = 1;
@@ -310,7 +327,7 @@ class Assignment2 {
                 case 8 -> {
                     ArrayList<Product> loadList = productsStorage.load();
                     System.out.println("File was loaded: ");
-                    System.out.printf("%-3s | %-13s | %-40s | %-10s | %s | %n", "STT", "Id", "Name", "Price", "Quantity");
+                    System.out.printf("%-3s | %-13s | %-40s | %-10s | %s | %n", "No.", "Id", "Name", "Price", "Quantity");
                     System.out.println("----------------------------------------------------------------------------------------");
 
                     int i = 1;
@@ -321,7 +338,7 @@ class Assignment2 {
                     }
                 }
 
-                case 9 -> System.out.println("Goodbye !!");
+                case 9 -> System.out.println("Good bye !!");
 
                 default -> System.out.println("Invalid option. Try again!!");
             }
@@ -333,6 +350,8 @@ class Assignment2 {
 
 public class LeMinhThanh_5C19_1901040204 {
     public static void main(String[] args) throws Exception {
+
+        // create instance of assignment 2
         final Assignment2 Assignment2 = new Assignment2();
         Assignment2.start();
     }
