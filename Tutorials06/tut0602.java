@@ -2,34 +2,25 @@ package Tutorials06;
 import java.util.Scanner;
 public class tut0602 {
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-
-        int [] arr = new int[0];
-        char choice = 'y';
-
-        while (choice == 'Y' || choice == 'y') {
+        int[] arr = new int[0];
+        Scanner sc = new Scanner(System.in);
+        while (true) {
             int[] arr2 = new int[arr.length + 1];
-            System.out.print("Enter the number: ");
-            int num = input.nextInt();
-
+            System.out.print("Enter an integer: ");
+            arr2[arr.length] = sc.nextInt();
+            sc.nextLine();
             for (int i = 0; i < arr.length; i++) {
                 arr2[i] = arr[i];
+                System.out.print(arr[i] + " ");
             }
-
-            arr2[arr2.length - 1] = num;
+            System.out.println(arr2[arr.length]);
             arr = arr2;
 
-            for (int j : arr) {
-                System.out.print(" " + j);
+            System.out.print("Do you wish to continue? (Y/N) ");
+            if (sc.nextLine().equalsIgnoreCase("n")) {
+                System.out.println("Goodbye!");
+                break;
             }
-
-            System.out.println(" ");
-            System.out.println("Do you want to continue entering a new number?");
-            System.out.println("Yes / No");
-
-            choice = input.next().charAt(0);
         }
-        System.out.println("Bye !!!");
-        input.close();
     }
 }

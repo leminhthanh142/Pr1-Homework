@@ -2,28 +2,25 @@ package Tutorials05;
 import java.util.Scanner;
 public class tut0502 {
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter money: ");
-        String money = input.nextLine();
+        Scanner input = new Scanner (System.in);
+        String price = input.nextLine();
 
-         if (money.substring(0, 1).equals("$")) {
-            double m1 = Double.parseDouble(money.substring(1));
-            double m2 = m1 * 23500;
-            System.out.println(money + " = " + Math.round(m2) + " VND");
-        }
-
-        else if (money.length() < 4){
-            System.out.println("Invalid input!!");
-        }
-
+        if (price.length() < 4) System.out.println("invalid input");
         else {
-            if (money.substring(money.length() - 4).equals(" EUR")) {
-                double m3 = Double.parseDouble(money.substring(0, money.length() - 4));
-                double m4 = m3 * 27100;
-                System.out.println(money + " = " + Math.round(m4) + " VND");
+            if(price.startsWith("$")) {
+                double p1 = Double.parseDouble(price.substring(1, price.length())) * 23500;
+                System.out.println("VND: " + p1);
+
             }
-            else System.out.println("Invalid input!!");
+
+            if(price.endsWith(" EUR")) {
+                double p2 = Double.parseDouble(price.substring(0, price.length() - 4)) * 27100;
+                System.out.println("VND: " + p2);
+
+            }
+
         }
+
 
         input.close();
     }

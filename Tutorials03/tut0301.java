@@ -13,6 +13,7 @@ public class tut0301 {
 
         // covert number in string into real number
         int price_1_VND = Integer.parseInt(price1.substring(0, 6));
+
         double price_2 = Double.parseDouble(price2.substring(1, 4));
         double price_3 = Double.parseDouble(price3.substring(0, 4));
 
