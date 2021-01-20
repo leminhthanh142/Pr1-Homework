@@ -1,17 +1,21 @@
 import java.util.Scanner;
 public class test {
     public static void main(String[] args) {
+
+        int number;
         Scanner sc = new Scanner(System.in);
+        System.out.println("Enter a number ::");
+        number = sc.nextInt();
 
-        String s1, s2 = "";
-        s1 = sc.nextLine();
-
-        for (int i=s1.length() - 1; i>=0; i--) {
-            s2 += s1.charAt(i);
+        for(int i = 2; i< number; i++) {
+            while(number%i == 0) {
+                System.out.println(i+" ");
+                number = number/i;
+            }
         }
-
-        if (s2.equals(s1)) System.out.println("okay");
-        else System.out.println("not okay");
+        if(number >2) {
+            System.out.println(number);
+        }
 
     }
 }
